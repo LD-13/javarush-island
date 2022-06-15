@@ -18,7 +18,7 @@ import static com.javarush.island.Island.Island.*;
 public class AnimalFactory {
     public void start() {
         herbInit();
-        herbMap.forEach((key, value) -> System.out.println(value.size()));
+       // herbMap.forEach((key, value) -> System.out.println(value.size()));
 
         Herbivores boar = new Boar();
         boar.setLocation(2, 2);
@@ -64,8 +64,7 @@ public class AnimalFactory {
         for (int i = 0; i < Field.length; i++) {
             for (int j = 0; j < Field[i].length; j++) {
                 int boundedRandomValue = ThreadLocalRandom.current().nextInt(0, 200);
-               // System.out.println("RANDOM " + t);
-                for (int k = 0; k < ThreadLocalRandom.current().nextInt(0, 200); k++) {
+                for (int k = 0; k < boundedRandomValue; k++) {
                     int finalI = i;
                     int finalJ = j;
                     executorService.execute(() -> herbMap.get(Field[finalI][finalJ]).add(new Herb(Field[finalI][finalJ])));
