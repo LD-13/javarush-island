@@ -7,6 +7,7 @@ import com.javarush.island.Plant.Herb;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Island {
     private static int xField = 20;
@@ -15,7 +16,8 @@ public class Island {
 
     public static Map<Cell, ArrayList<Herbivores>> herbivoresAnimalMap = new HashMap<>();
     public static Map<Cell, ArrayList<Carnivores>> carnivoresAnimalMap = new HashMap<>();
-    public static Map<Cell, ArrayList<Herb>> herbMap = new HashMap<>();
+   // public static Map<Cell, ArrayList<Herb>> herbMap = new HashMap<>();
+    public static Map<Cell, ArrayList<Herb>> herbMap = new ConcurrentHashMap<>();
 
     public void initField() {
         for (int i = 0; i < Field.length; i++) {

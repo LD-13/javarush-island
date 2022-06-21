@@ -10,7 +10,8 @@ import static com.javarush.island.Island.Island.*;
 
 public abstract class Animal implements Behavior {
     private int weight;
-    private int speed;
+    private int energy;
+    private int HP = 100;
     private String type;
     private KindOfAnimal Character;
 
@@ -21,28 +22,30 @@ public abstract class Animal implements Behavior {
 
     private Random randomAction = new Random();
 
-    public Animal(int weight, int speed, String type, KindOfAnimal character) {
+    public Animal(int weight, int energy, String type, KindOfAnimal character) {
         this.weight = weight;
-        this.speed = speed;
+        this.energy = energy;
         this.type = type;
         this.Character = character;
     }
 
     @Override
-    public void produce() {
-        System.out.println(this.Character.equals(KindOfAnimal.HERBIVORES));
-        if (!this.isSaturation()) {
+    public boolean produce() {
+      //  System.out.println(this.Character.equals(KindOfAnimal.HERBIVORES));
+       // if (!this.isSaturation()) {
             var animalMap = this.Character.equals(KindOfAnimal.HERBIVORES) ? herbivoresAnimalMap : carnivoresAnimalMap;
-            List<Animal> as = animalMap.get(this.getLocation()).stream()
+            List<Animal> animal = animalMap.get(this.getLocation()).stream()
                     .filter(c -> c.getType().equals(this.getType()))
                     .filter(c -> !c.isSaturation())
                     .collect(Collectors.toList());
-            if (as.size() > 1) {
-                if (randomAction.nextInt(100) > 50) {
-                    as.get(0).setSaturation(true);
+            if (animal.size() > 1) {
+                if (randomAction.nextInt(100) > 70) {
+                    animal.get(0).setSaturation(true);
+                    return true;
                 }
             }
-        }
+       // }
+        return false;
     }
 
     @Override
@@ -85,12 +88,12 @@ public abstract class Animal implements Behavior {
         location = Field[x][y];
     }
 
-    public int getSpeed() {
-        return speed;
+    public int getEnergy() {
+        return energy;
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
+    public void setEnergy(int energy) {
+        this.energy = energy;
     }
 
     public int getWeight() {
@@ -99,6 +102,14 @@ public abstract class Animal implements Behavior {
 
     public void setWeight(int weight) {
         this.weight = weight;
+    }
+
+    public int getHP() {
+        return HP;
+    }
+
+    public void setHP(int HP) {
+        this.HP = HP;
     }
 
     public boolean isSaturation() {
@@ -114,7 +125,7 @@ public abstract class Animal implements Behavior {
         return Character + "{" +
                 "type='" + type + '\'' +
                 ", weight=" + weight +
-                ", speed=" + speed +
+                ", speed=" + energy +
                 ", isSaturation=" + isSaturation +
                 ", location=" + location +
                 '}' + "\n";

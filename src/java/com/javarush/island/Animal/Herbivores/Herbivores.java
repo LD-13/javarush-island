@@ -10,10 +10,14 @@ public abstract class Herbivores extends Animal {
         super(weight, speed, type, KindOfAnimal.HERBIVORES);
     }
 
+    public abstract int maxQuantity();
+
     @Override
-    public void eat() {
+    public boolean eat() {
         if (herbMap.get(this.getLocation()).size() > 0) {
             herbMap.get(this.getLocation()).remove(0);
+            return true;
         }
+        return false;
     }
 }

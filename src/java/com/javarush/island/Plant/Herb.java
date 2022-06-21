@@ -6,6 +6,10 @@ import static com.javarush.island.Island.Island.Field;
 
 public class Herb {
     private Cell location;
+    private static volatile int quantity = 0;
+
+    public Herb() {
+    }
 
     public Herb(Cell location) {
         this.location = location;
@@ -17,5 +21,13 @@ public class Herb {
 
     public void setLocation(int x, int y) {
         location = Field[x][y];
+    }
+
+    public static int getQuantity() {
+        return quantity;
+    }
+
+    public static void setQuantity(int quantity) {
+        Herb.quantity = quantity;
     }
 }

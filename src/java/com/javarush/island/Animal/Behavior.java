@@ -1,7 +1,7 @@
 package com.javarush.island.Animal;
 
 public interface Behavior {
-    void eat();
-    void produce();
+    boolean eat();
+    boolean produce();
     void move();
 }
