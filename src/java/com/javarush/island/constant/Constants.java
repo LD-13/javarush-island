@@ -13,8 +13,8 @@ public class Constants {
      */
     private int pregnancyPeriod = 3;
 
-    public static final int XField = 80;
-    public static final int YField = 5;
+    public static final int XField = 100;
+    public static final int YField = 20;
 
     private final int[] maxHerbivoresOnCell = new int[10];
     private final int[] maxCarnivoresOnCell = new int[5];

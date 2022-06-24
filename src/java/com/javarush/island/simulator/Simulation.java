@@ -8,6 +8,10 @@ import com.javarush.island.plant.Herb;
 import com.javarush.island.constant.Constants;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.javarush.island.island.Island.*;
 
@@ -17,29 +21,27 @@ public class Simulation {
     private int eatenAnimals = 0;
     private int eatenHerb = 0;
     private int saturation = 0;
-    private int grownHerbQuantity = 0;
+    private volatile int grownHerbQuantity = 0;
     private int bornAnimal = 0;
-    private int deadFromHunger = 0;
+    private AtomicInteger deadFromHunger = new AtomicInteger(0);
+    private int period = 5;
+    private int allTime = 0;
 
     private Constants constants;
 
     private Map<Cell, Integer> growHerb = new HashMap<>();
     private ArrayList<Herbivores> pregnancyHerbivores = new ArrayList<>();
     private ArrayList<Carnivores> pregnancyCarnivores = new ArrayList<>();
+    ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     public Simulation(Constants constants) {
         this.constants = constants;
     }
 
     public void start() {
+        threadStatistics();
         while (!stop()) {
             days++;
-            eatenAnimals = 0;
-            eatenHerb = 0;
-            saturation = 0;
-            grownHerbQuantity = 0;
-            bornAnimal = 0;
-            deadFromHunger = 0;
             carnivoresAnimal();
             herbivoresAnimal();
             growHerb();
@@ -47,33 +49,52 @@ public class Simulation {
             bornHerbivores();
             deadCarnivoresAnimal();
             deadHerbivoresAnimal();
-            System.out.println(statisticsMessage());
         }
+        service.shutdown();
+    }
 
+    private void reset() {
+        eatenAnimals = 0;
+        eatenHerb = 0;
+        saturation = 0;
+        grownHerbQuantity = 0;
+        bornAnimal = 0;
+        deadFromHunger.set(0);
+    }
+
+    private void threadStatistics() {
+        service.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println(statisticsMessage());
+                reset();
+                allTime += period;
+            }
+        }, 0, period, TimeUnit.SECONDS);
     }
 
     private void carnivoresAnimal() {
         for (Map.Entry<Cell, ArrayList<Carnivores>> entry : carnivoresAnimalMap.entrySet()) {
-                for (Carnivores carnivores : entry.getValue()) {
-                    int energy = carnivores.getEnergy();
-                    while (energy > 0) {
-                        if (carnivores.getHungryLevel() < 90) {
-                            statisticsEatMeat(carnivores.eat());
-                            energy--;
-                        }
-                        if (!carnivores.isSaturation() && energy > 0) {
-                            if (carnivores.produce()) {
-                                statisticsSaturation();
-                            }
-                            energy--;
-                        }
-                        if (energy > 0) {
-                            carnivores.move();
-                            energy--;
-                        }
+            for (Carnivores carnivores : entry.getValue()) {
+                int energy = carnivores.getEnergy();
+                while (energy > 0) {
+                    if (carnivores.getHungryLevel() < 90) {
+                        statisticsEatMeat(carnivores.eat());
+                        energy--;
                     }
-                    carnivores.setHungryLevel(carnivores.getHungryLevel() - 30);
+                    if (!carnivores.isSaturation() && energy > 0) {
+                        if (carnivores.produce()) {
+                            statisticsSaturation();
+                        }
+                        energy--;
+                    }
+                    if (energy > 0) {
+                        carnivores.move();
+                        energy--;
+                    }
                 }
+                carnivores.setHungryLevel(carnivores.getHungryLevel() - 30);
+            }
         }
     }
 
@@ -220,11 +241,11 @@ public class Simulation {
     }
 
     private void statisticsDeadHunger() {
-        deadFromHunger++;
+        deadFromHunger.getAndIncrement();
     }
 
     private String statisticsMessage() {
-        return "День " + days + ". Всего животных было съедено " + eatenAnimals +
+        return "Прошло " + allTime + " секунд" + ". Всего животных было съедено " + eatenAnimals +
                 ". Всего травы было съедено " + eatenHerb +
                 ". Всего животных забеременело " + saturation +
                 ". Всего травы выросло " + grownHerbQuantity +
