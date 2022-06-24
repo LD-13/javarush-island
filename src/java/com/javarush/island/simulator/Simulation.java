@@ -26,8 +26,6 @@ public class Simulation {
     private Map<Cell, Integer> growHerb = new HashMap<>();
     private ArrayList<Herbivores> pregnancyHerbivores = new ArrayList<>();
     private ArrayList<Carnivores> pregnancyCarnivores = new ArrayList<>();
-    //private Map<Cell, String> pregnancyHerbivores = new HashMap<>();
-    // ExecutorService executorService = Executors.newFixedThreadPool(1);
 
     public Simulation(Constants constants) {
         this.constants = constants;
@@ -42,11 +40,6 @@ public class Simulation {
             grownHerbQuantity = 0;
             bornAnimal = 0;
             deadFromHunger = 0;
-//        int k = 0;
-//        for (Map.Entry<Cell, ArrayList<Herbivores>> entry : herbivoresAnimalMap.entrySet()) {
-//            k += entry.getValue().size();
-//        }
-//        System.out.println("животные " + k);
             carnivoresAnimal();
             herbivoresAnimal();
             growHerb();
@@ -56,7 +49,6 @@ public class Simulation {
             deadHerbivoresAnimal();
             System.out.println(statisticsMessage());
         }
-       // executorService.shutdown();
 
     }
 
