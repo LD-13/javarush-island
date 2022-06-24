@@ -1,4 +1,4 @@
-import com.javarush.island.Simulator.CreateWorld;
+import com.javarush.island.simulator.CreateWorld;
 
 public class Main {
     public static void main(String[] args) {
